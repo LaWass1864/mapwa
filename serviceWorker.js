@@ -20,26 +20,13 @@ self.addEventListener('install', (e) => {
 
 // FETCH = servir le cache immédiatement, puis mettre à jour en arrière-plan
 self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches.open(staticCacheName).then(cache => {
-            return cache.match(event.request).then(cachedResponse => {
-                const fetchPromise = fetch(event.request).then(networkResponse => {
-                    // Si la réponse réseau est bonne, on met à jour le cache
-                    if (networkResponse && networkResponse.status === 200) {
-                        cache.put(event.request, networkResponse.clone());
-                    }
-                    return networkResponse;
-                }).catch(() => {
-                    // Si le réseau échoue, et qu’on n’a rien en cache : page offline
-                    return cachedResponse || caches.match('/offline.html');
-                });
-
-                // On retourne la version cache tout de suite, et le réseau travaille derrière
-                return cachedResponse || fetchPromise;
-            });
-        })
-    );
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || caches.match('/offline.html');
+    })
+  );
 });
+
 
 // ACTIVATE = suppression des vieux caches
 self.addEventListener('activate', (e) => {
