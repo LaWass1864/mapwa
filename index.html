@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snack’n’Track 🍪</title>
+  <link rel="shortcut icon" href="./assets/apple-icon-180.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="logo.html">
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/apple-icon-180.png">
+  <!-- Balises Meta -->
+  <meta name="apple-mobile-web-app-status-bar" content="white">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="IE=7">
+  <meta name="theme-color" content="white">
+</head>
+
+<body>
+  <h1>Snack’n’Track 🍪</h1>
+  <form id="snack-form">
+    <input type="text" id="snack-name" placeholder="Nom du snack" required="">
+    <input type="text" id="snack-mood" placeholder="Ton humeur" required="">
+    <button type="submit">Ajouter</button>
+  </form>
+  <ul id="snack-list"></ul>
+  <input type="file" id="csvFile" accept=".csv">
+  <button onclick="readCSV()">Charger la liste</button>
+  <ul id="participants"></ul>
+  <!-- TON CODE APP -->
+  <script src="app.js"></script>
+
+  <!-- TON CODE POUR /open -->
+  <script>
+    if (location.pathname === "/open") {
+      alert("🗂️ Tu as ouvert un fichier CSV !");
+    }
+  </script>
+
+
+</body>
+
+</html>

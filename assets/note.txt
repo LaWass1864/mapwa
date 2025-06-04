@@ -1,0 +1,2 @@
+HTTP sur mobile : 
+On va sur le lien : chrome://inspect/#devices
