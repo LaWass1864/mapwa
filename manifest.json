@@ -10,13 +10,12 @@
   "orientation": "portrait-primary",
   "background_color": "#f77f00",
   "theme_color": "#f77f00",
+  "icons": [],
   "file_handlers": [
     {
       "action": "/open",
       "accept": {
-        "text/csv": [
-          ".csv"
-        ]
+        "text/csv": [".csv"]
       }
     }
   ],
@@ -28,17 +27,10 @@
       "files": [
         {
           "name": "file",
-          "accept": [
-            "image/*",
-            "text/csv"
-          ]
+          "accept": ["image/*", "text/csv"]
         }
       ]
     }
   },
-  "categories": [
-    "productivity",
-    "lifestyle"
-  ]
-  
+  "categories": ["productivity", "lifestyle"]
 }
