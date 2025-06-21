@@ -8,6 +8,32 @@
   "background_color": "#f77f00",
   "theme_color": "#f77f00",
   "orientation": "portrait-primary",
+  "file_handlers": [
+    {
+      "action": "/open",
+      "accept": {
+        "text/csv": [
+          ".csv"
+        ]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/*",
+            "text/csv"
+          ]
+        }
+      ]
+    }
+  },
   "icons": [
     {
       "src": "assets/manifest-icon-192.maskable.png",
@@ -33,26 +59,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "file_handlers": [
-    {
-      "action": "/open",
-      "accept": {
-        "text/csv": [".csv"]
-      }
-    }
-  ],
-  "share_target": {
-    "action": "/share",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "files": [
-        {
-          "name": "file",
-          "accept": ["image/*", "text/csv"]
-        }
-      ]
-    }
-  }
+  ]
 }
