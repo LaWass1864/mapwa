@@ -1,14 +1,7 @@
 {
-  "name": "Snack'n'Track",
-  "short_name": "S&T",
-  "description": "Snack'n'Track vous aide à suivre vos envies de snacks et votre humeur, sans prise de tête.",
-  "lang": "fr",
-  "id": "./index.html",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#f77f00",
-  "theme_color": "#f77f00"
-  
+  "manifest_version": 3,
+  "name": "Snack'N'Track",
+  "version": "1.0.0",
+  "description": "Une PWA qui va vous donnez faim"
+ 
 }
