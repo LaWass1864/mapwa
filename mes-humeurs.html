@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mes humeurs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="mes-humeurs.js" defer></script>
+</head>
+<body>
+  <h1>😊 Mes humeurs</h1>
+
+  <div class="mood-form">
+    <input type="date" id="datePicker" />
+    <select id="moodSelector">
+      <option value="">-- Choisis ton humeur --</option>
+      <option value="😊">Heureux.se</option>
+      <option value="😐">Neutre</option>
+      <option value="😔">Triste</option>
+      <option value="😠">En colère</option>
+      <option value="😴">Fatigué.e</option>
+    </select>
+    <button id="saveMood">Sauvegarder</button>
+  </div>
+
+  <h2>🗓️ Historique</h2>
+  <ul id="moodHistory"></ul>
+
+  <!-- Tabbar -->
+  <nav class="tabbar">
+    <a href="index.html">🏠</a>
+    <a href="mes-humeurs.html">😊</a>
+    <a href="#">⚙️</a>
+  </nav>
+</body>
+</html>
