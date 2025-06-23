@@ -1,31 +1,29 @@
 // Vérifie que le navigateur supporte les service workers.
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('serviceWorker.js')
-      .then(reg => {
-        console.log('✅ Service Worker enregistré');
+  navigator.serviceWorker.register('/serviceWorker.js')
+    .then(reg => {
+      console.log('✅ Service Worker enregistré', reg);
 
-        // 🔄 Rechargement à chaud si update
-        reg.onupdatefound = () => {
-          const newWorker = reg.installing;
-          newWorker.onstatechange = () => {
-            if (newWorker.state === 'installed') {
-              if (navigator.serviceWorker.controller) {
-                const updateDiv = document.createElement('div');
-                updateDiv.innerHTML = `
-                  <div style="background:#f77f00; color:white; padding:1rem; text-align:center;">
-                    🔄 Nouvelle version disponible.
-                    <button style="margin-left:1rem;" onclick="window.location.reload()">Mettre à jour</button>
-                  </div>
-                `;
-                document.body.prepend(updateDiv);
-              }
+      // 🔄 Rechargement à chaud si update
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              const updateDiv = document.createElement('div');
+              updateDiv.innerHTML = `
+                <div style="background:#f77f00; color:white; padding:1rem; text-align:center;">
+                  🔄 Nouvelle version disponible.
+                  <button style="margin-left:1rem;" onclick="window.location.reload()">Mettre à jour</button>
+                </div>
+              `;
+              document.body.prepend(updateDiv);
             }
-          };
+          }
         };
-      })
-      .catch(err => console.error('❌ Erreur Service Worker :', err));
-  });
+      };
+    })
+    .catch(err => console.error('❌ Erreur Service Worker :', err));
 }
 
 // === TOUT LE RESTE DE L’APP ===
