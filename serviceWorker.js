@@ -1,14 +1,14 @@
 const staticCacheName = "cache-v2";
 const assets = [
-    "/",
-    "/app.js",
-    "/style.css",
-    "/manifest.json",
-    "/assets/apple-icon-180.png",
-    "/offline.html",
-    "/mes-humeurs.html",
-    "/mes-humeurs.js",
-    "/index.html"
+ "/",
+  "/index.html",
+  "/style.css",
+  "/app.js",
+  "/manifest.json",
+  "/offline.html",
+  "/mes-humeurs.html",
+  "/mes-humeurs.js",
+  "/assets/apple-icon-180.png"
 ];
 
 // INSTALL = construction du temple
