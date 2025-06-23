@@ -40,6 +40,33 @@
     "productivity",
     "lifestyle"
   ],
+
+   "shortcuts": [
+    {
+      "name": "Ajouter un snack",
+      "short_name": "Ajout snack",
+      "description": "Accéder rapidement à l'ajout de snack",
+      "url": "/ajouter-snack",
+      "icons": [
+        {
+          "src": "assets/manifest-icon-192.maskable.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Suivi humeur",
+      "short_name": "Humeur",
+      "description": "Voir le suivi de ton humeur",
+      "url": "/suivi-humeur",
+      "icons": [
+        {
+          "src": "assets/manifest-icon-192.maskable.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "assets/manifest-icon-192.maskable.png",
