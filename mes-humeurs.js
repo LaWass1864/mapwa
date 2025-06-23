@@ -1,29 +1,24 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const dateInput = document.getElementById("datePicker");
+  const moodSelect = document.getElementById("moodSelector");
+  const saveBtn = document.getElementById("saveMood");
+  const moodHistory = document.getElementById("moodHistory");
 
-const datePicker = document.getElementById("datePicker");
-const moodSelector = document.getElementById("moodSelector");
-const saveMood = document.getElementById("saveMood");
-const moodHistory = document.getElementById("moodHistory");
+  saveBtn.addEventListener("click", () => {
+    const date = dateInput.value;
+    const mood = moodSelect.value;
 
-let moods = JSON.parse(localStorage.getItem("moods")) || {};
+    if (!date || !mood) {
+      alert("Merci de sélectionner une date et une humeur.");
+      return;
+    }
 
-saveMood.addEventListener("click", () => {
-  const date = datePicker.value;
-  const mood = moodSelector.value;
-
-  if (!date || !mood) return alert("Complète la date et l’humeur");
-
-  moods[date] = mood;
-  localStorage.setItem("moods", JSON.stringify(moods));
-  renderHistory();
-});
-
-function renderHistory() {
-  moodHistory.innerHTML = "";
-  Object.keys(moods).sort().forEach(date => {
     const li = document.createElement("li");
-    li.textContent = `${date} : ${moods[date]}`;
+    li.textContent = `${date} – ${mood}`;
     moodHistory.appendChild(li);
-  });
-}
 
-renderHistory();
+    // reset
+    dateInput.value = "";
+    moodSelect.value = "";
+  });
+});
