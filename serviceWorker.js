@@ -1,16 +1,14 @@
 const staticCacheName = "cache-v2";
 const assets = [
- "/",
+  "/",
   "/index.html",
-  "/style.css",
-  "/app.js",
-  "/manifest.json",
-  "/offline.html",
   "/mes-humeurs.html",
   "/mes-humeurs.js",
-  "/assets/apple-icon-180.png"
+  "/style.css",
+  "/offline.html",
+  "/manifest.json",
+  "/assets/apple-icon-180.png",
 ];
-
 // INSTALL = construction du temple
 self.addEventListener('install', (e) => {
     e.waitUntil(

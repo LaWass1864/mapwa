@@ -4,7 +4,7 @@ if ('serviceWorker' in navigator) {
     .then(reg => {
       console.log('✅ Service Worker enregistré', reg);
 
-      // 🔄 Rechargement à chaud si update
+      // 🔄 Rechargement si update
       reg.onupdatefound = () => {
         const newWorker = reg.installing;
         newWorker.onstatechange = () => {
