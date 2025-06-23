@@ -19,14 +19,23 @@ self.addEventListener('install', (e) => {
 });
 
 // FETCH = servir le cache immédiatement, puis mettre à jour en arrière-plan
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // 🔁 Pour les routes "propres" comme /mes-humeurs
+  if (url.origin === location.origin && url.pathname.endsWith('/mes-humeurs')) {
+    event.respondWith(caches.match('/mes-humeurs.html'));
+    return;
+  }
+
+  // 🧠 Stratégie générale cache-first
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || caches.match('/offline.html');
+    caches.match(request).then(response => {
+      return response || fetch(request).catch(() => caches.match('/offline.html'));
     })
   );
 });
-
 
 // ACTIVATE = suppression des vieux caches
 self.addEventListener('activate', (e) => {
