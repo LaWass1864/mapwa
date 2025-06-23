@@ -55,14 +55,12 @@
       ]
     },
     {
-      "name": "Suivi humeur",
-      "short_name": "Humeur",
-      "description": "Voir le suivi de ton humeur",
-      "url": "/suivi-humeur",
-      "icons": [
-        {
-          "src": "assets/manifest-icon-192.maskable.png",
-          "sizes": "192x192"
+      "name": "Voir mes humeurs",
+    "url": "/mes-humeurs.html",
+    "icons": [{
+      "src": "assets/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png"
         }
       ]
     }
