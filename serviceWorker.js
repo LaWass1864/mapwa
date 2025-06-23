@@ -7,6 +7,7 @@ const assets = [
     "/assets/apple-icon-180.png",
     "/offline.html",
     "/mes-humeurs.html",
+    "/mes-humeurs.js",
     "/index.html"
 ];
 
