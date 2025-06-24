@@ -10,7 +10,12 @@
   "lang": "fr",
   "id": "/index.html",
   "scope": "/",
+  "display": "standalone",
+  "dir": "ltr",
   "display_override": ["standalone", "browser"],
+  "launch_handler": {
+  "client_mode": "auto"
+},
   "file_handlers": [
     {
       "action": "/open",
