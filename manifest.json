@@ -10,7 +10,7 @@
   "lang": "fr",
   "id": "/index.html",
   "scope": "/",
-  "display": "standalone",
+  "display_override": ["standalone", "browser"],
   "file_handlers": [
     {
       "action": "/open",
