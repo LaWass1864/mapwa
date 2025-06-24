@@ -48,3 +48,34 @@ self.addEventListener('activate', (e) => {
         })
     );
 });
+
+// Service API notifications PUSH
+
+self.addEventListener('push', event => {
+  const data = event.data ? event.data.text() : "📬 Nouvelle notification";
+
+  event.waitUntil(
+    self.registration.showNotification("Snack'n'Track", {
+      body: data,
+      icon: '/assets/apple-icon-180.png'
+    })
+  );
+});
+
+// Notification même hors connexion 
+
+self.addEventListener('push', function(event) {
+  const data = event.data?.json() || {};
+
+  const title = data.title || "Nouvelle notification 🧡";
+  const options = {
+    body: data.body || "Contenu par défaut",
+    icon: "/assets/icons/icon-192x192.png", // adapte au chemin de ton icône
+    badge: "/assets/icons/icon-96x96.png", // optionnel
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
