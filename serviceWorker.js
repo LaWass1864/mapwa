@@ -7,9 +7,9 @@ const assets = [
   "/style.css",
   "/offline.html",
   "/manifest.json",
-  "/assets/apple-icon-180.png",
-  "/assets/icons/icon-192x192.png",
+  "/assets/apple-icon-180.png",  
   "/assets/icons/icon-96x96.png",
+  // "/assets/icons/icon-192x192.png"
 ];
 
 // INSTALL
