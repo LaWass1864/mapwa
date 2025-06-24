@@ -1,5 +1,3 @@
-let offlineSnack = [];
-
 // Vérifie que le navigateur supporte les service workers.
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
@@ -39,6 +37,7 @@ const form = document.getElementById('snack-form');
 const snackList = document.getElementById('snack-list');
 const nameInput = document.getElementById('snack-name');
 const moodInput = document.getElementById('snack-mood');
+import { addPending } from './idb.js';
 
 function generateId() {
   return Date.now().toString();
@@ -75,42 +74,40 @@ function refreshSnackList() {
 // Chargement initial
 refreshSnackList();
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const name = nameInput.value.trim();
   const mood = moodInput.value.trim();
+  if (!name || !mood) return;
 
-  if (name && mood) {
-    const snacks = JSON.parse(localStorage.getItem('snacks')) || [];
-    const newSnack = {
-      id: generateId(),
-      name,
-      mood
-    };
-snacks.push(newSnack);
-localStorage.setItem('snacks', JSON.stringify(snacks));
+  const newSnack = { id: generateId(), name, mood };
 
-if (navigator.onLine) {
-  // On a du réseau → envoie direct (simulation)
-  fetch('/api/snack', {
-    method: 'POST',
-    body: JSON.stringify(newSnack),
-    headers: { 'Content-Type': 'application/json' }
-  }).then(() => console.log("Snack envoyé !"))
-    .catch(() => console.warn("Erreur d'envoi immédiat"));
-} else {
-  // Hors ligne → mise en attente
-  offlineSnacks.push(newSnack);
-  navigator.serviceWorker.ready.then(reg => {
-    reg.sync.register('sync-snacks');
-    console.log("Snack en attente de synchronisation");
-  });
-}
+  // Affiche immédiatement dans la liste + localStorage
+  const snacks = JSON.parse(localStorage.getItem('snacks')) || [];
+  snacks.push(newSnack);
+  localStorage.setItem('snacks', JSON.stringify(snacks));
+  refreshSnackList();
+  form.reset();
+  afficherNotificationSnackAjoute(name);
 
-    refreshSnackList();
-    form.reset();
-    afficherNotificationSnackAjoute(name);
+  // Gestion réseau / offline
+  if (navigator.onLine) {
+    try {
+      await fetch('/api/snack', {
+        method: 'POST',
+        body: JSON.stringify(newSnack),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log("✅ Snack envoyé !");
+    } catch (err) {
+      console.warn("❌ Erreur d'envoi immédiat, enregistrement local");
+      await addPending(newSnack);
+      (await navigator.serviceWorker.ready).sync.register('sync-snacks');
+    }
+  } else {
+    console.warn("📴 Offline : enregistrement local");
+    await addPending(newSnack);
+    (await navigator.serviceWorker.ready).sync.register('sync-snacks');
   }
 });
 
