@@ -124,3 +124,27 @@ self.addEventListener('push', function(event) {
     self.registration.showNotification(title, options)
   );
 });
+
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-snacks') {
+    event.waitUntil(syncPendingSnacks());
+  }
+});
+
+async function syncPendingSnacks() {
+  // Simulation : recrée les snacks en attente (normalement tu les lis depuis IndexedDB)
+  const fakeSnacks = self.fakeSnacks || [];
+  for (const snack of fakeSnacks) {
+    try {
+      await fetch('/api/snack', {
+        method: 'POST',
+        body: JSON.stringify(snack),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log("Snack synchronisé :", snack);
+    } catch (err) {
+      console.error("Erreur de sync", err);
+    }
+  }
+  self.fakeSnacks = []; // vide la file
+}

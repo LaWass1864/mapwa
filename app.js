@@ -1,3 +1,5 @@
+let offlineSnack = [];
+
 // Vérifie que le navigateur supporte les service workers.
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
@@ -86,8 +88,25 @@ form.addEventListener('submit', (e) => {
       name,
       mood
     };
-    snacks.push(newSnack);
-    localStorage.setItem('snacks', JSON.stringify(snacks));
+snacks.push(newSnack);
+localStorage.setItem('snacks', JSON.stringify(snacks));
+
+if (navigator.onLine) {
+  // On a du réseau → envoie direct (simulation)
+  fetch('/api/snack', {
+    method: 'POST',
+    body: JSON.stringify(newSnack),
+    headers: { 'Content-Type': 'application/json' }
+  }).then(() => console.log("Snack envoyé !"))
+    .catch(() => console.warn("Erreur d'envoi immédiat"));
+} else {
+  // Hors ligne → mise en attente
+  offlineSnacks.push(newSnack);
+  navigator.serviceWorker.ready.then(reg => {
+    reg.sync.register('sync-snacks');
+    console.log("Snack en attente de synchronisation");
+  });
+}
 
     refreshSnackList();
     form.reset();
