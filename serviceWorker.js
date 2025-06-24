@@ -114,18 +114,12 @@ self.addEventListener('fetch', event => {
 
 // NOTIFICATIONS PUSH
 self.addEventListener('push', function(event) {
-  console.log('Service Worker: Notification push reçue');
-  const data = event.data?.json() || {};
-
-  const title = data.title || "Snack'n'Track 🍉";
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || "Snack'n'Track";
   const options = {
-    body: data.body || "Nouvelle notification",
-    icon: "./assets/manifest-icon-192.maskable.png",
-    badge: "./assets/manifest-icon-192.maskable.png",
-    tag: 'snack-notification',
-    requireInteraction: false
+    body: data.body || "Voici une notification push !",
+    icon: "/assets/manifest-icon-192.maskable.png"
   };
-
   event.waitUntil(
     self.registration.showNotification(title, options)
   );

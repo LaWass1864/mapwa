@@ -4,6 +4,11 @@ if ('serviceWorker' in navigator) {
     .then(reg => {
       console.log('✅ Service Worker enregistré', reg);
 
+      if ('Notification' in window) {
+  Notification.requestPermission().then(permission => {
+    console.log("📢 Permission notification :", permission);
+  });
+}
       // 🔄 Rechargement si update
       reg.onupdatefound = () => {
         const newWorker = reg.installing;
@@ -86,6 +91,7 @@ form.addEventListener('submit', (e) => {
 
     refreshSnackList();
     form.reset();
+    afficherNotificationSnackAjoute(name);
   }
 });
 
@@ -110,6 +116,18 @@ function readCSV() {
   };
   reader.readAsText(fileInput.files[0]);
 }
+
+//ajouter une notification locale simple quand un snack est ajouté.
+
+function afficherNotificationSnackAjoute(nomSnack) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification("Snack ajouté 🥳", {
+      body: `Tu as ajouté "${nomSnack}" !`,
+      icon: "/assets/manifest-icon-192.maskable.png"
+    });
+  }
+}
+// Demander la persmission au lancement de 'lapp 
 
 
 
