@@ -37,7 +37,7 @@ const form = document.getElementById('snack-form');
 const snackList = document.getElementById('snack-list');
 const nameInput = document.getElementById('snack-name');
 const moodInput = document.getElementById('snack-mood');
-import { addPending } from './idb.js';
+
 
 function generateId() {
   return Date.now().toString();
