@@ -1,4 +1,4 @@
-const publicKey = "BA9UA5u2xGMSCrVmQBR3eohRBOF0NdBE6XS0iYzLuZGbg3gyFD5AV4sGFSctRTtdd_2RHylM7cj8e6uZmWqdGEk"; // remplace par la clé publique
+const publicKey = "BEhg8SOTBo_cFblk5cXr8PLC83vlm_RfcN3ptwpEEeWdds0m0Gd1-6iK0ySzdTzM4idlMcFXJbFk1_xmrwCtATw"; // remplace par la clé publique
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
   navigator.serviceWorker.ready.then(registration => {

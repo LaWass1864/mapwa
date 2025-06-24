@@ -4,11 +4,12 @@
   "start_url": "./index.html",
   "background_color": "#f77f00",
   "theme_color": "#f77f00",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "description": "Snack'n'Track vous aide à suivre vos envies de snacks et votre humeur, sans prise de tête.",
+  "categories": ["productivity", "health"],
   "lang": "fr",
-  "id": "./index.html",
-  "scope": "./",
+  "id": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "file_handlers": [
     {
@@ -20,6 +21,19 @@
       }
     }
   ],
+
+  "screenshots": [
+  {
+    "src": "/screenshot/screenshot2.png",
+    "sizes": "640x480",
+    "type": "image/png"
+  },
+  {
+    "src": "/screenshot/screenshot1.png",
+    "sizes": "640x480",
+    "type": "image/png"
+  }
+],
   "share_target": {
     "action": "/share",
     "method": "POST",
@@ -36,10 +50,6 @@
       ]
     }
   },
-  "categories": [
-    "productivity",
-    "lifestyle"
-  ],
 
    "shortcuts": [
     {
