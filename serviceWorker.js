@@ -48,14 +48,9 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Ignorer les requêtes non-GET
-  if (request.method !== 'GET') {
-    return;
-  }
-
-  // Ignorer les requêtes vers d'autres domaines
-  if (url.origin !== location.origin) {
-    return;
+  // Ne gérer que les requêtes GET de notre domaine
+  if (request.method !== 'GET' || url.origin !== location.origin) {
+    return; // Laisse le navigateur gérer ces requêtes normalement
   }
 
   console.log('Service Worker: Requête interceptée', url.pathname);
@@ -65,8 +60,12 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       caches.match('./index.html')
         .then(response => {
+          console.log('Cache match pour index:', !!response);
           return response || fetch(request)
-            .catch(() => caches.match('./offline.html'));
+            .catch(() => {
+              console.log('Fallback vers offline.html pour index');
+              return caches.match('./offline.html');
+            });
         })
     );
     return;
@@ -77,8 +76,12 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       caches.match('./mes-humeurs.html')
         .then(response => {
+          console.log('Cache match pour mes-humeurs:', !!response);
           return response || fetch(request)
-            .catch(() => caches.match('./offline.html'));
+            .catch(() => {
+              console.log('Fallback vers offline.html pour mes-humeurs');
+              return caches.match('./offline.html');
+            });
         })
     );
     return;
@@ -104,8 +107,8 @@ self.addEventListener('fetch', event => {
             }
             return fetchResponse;
           })
-          .catch(() => {
-            console.log('Service Worker: Erreur réseau, affichage page offline');
+          .catch((error) => {
+            console.log('Service Worker: Erreur réseau pour', url.pathname, error);
             return caches.match('./offline.html');
           });
       })
@@ -114,37 +117,19 @@ self.addEventListener('fetch', event => {
 
 // NOTIFICATIONS PUSH
 self.addEventListener('push', function(event) {
-  const data = event.data ? event.data.json() : {};
-  const title = data.title || "Snack'n'Track";
+  console.log('Service Worker: Notification push reçue');
+  const data = event.data?.json() || {};
+
+  const title = data.title || "Snack'n'Track 🍉";
   const options = {
-    body: data.body || "Voici une notification push !",
-    icon: "/assets/manifest-icon-192.maskable.png"
+    body: data.body || "Nouvelle notification",
+    icon: "./assets/manifest-icon-192.maskable.png",
+    badge: "./assets/manifest-icon-192.maskable.png",
+    tag: 'snack-notification',
+    requireInteraction: false
   };
+
   event.waitUntil(
     self.registration.showNotification(title, options)
   );
 });
-
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-snacks') {
-    event.waitUntil(syncPendingSnacks());
-  }
-});
-
-async function syncPendingSnacks() {
-  // Simulation : recrée les snacks en attente (normalement tu les lis depuis IndexedDB)
-  const fakeSnacks = self.fakeSnacks || [];
-  for (const snack of fakeSnacks) {
-    try {
-      await fetch('/api/snack', {
-        method: 'POST',
-        body: JSON.stringify(snack),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log("Snack synchronisé :", snack);
-    } catch (err) {
-      console.error("Erreur de sync", err);
-    }
-  }
-  self.fakeSnacks = []; // vide la file
-}
