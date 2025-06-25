@@ -1,13 +1,13 @@
 const staticCacheName = "snack-track-v1";
 const assets = [
   "./",
-  "/index.html",
-  "/app.js",
-  "/mes-humeurs.html",
+  "./index.html",
+  "./app.js",
+  "./mes-humeurs.html",
   "/mes-humeurs.js",
-  "/style.css",
-  "/offline.html",
-  "/manifest.json",
+  "./style.css",
+  "./offline.html",
+  "./manifest.json",
   "./assets/manifest-icon-192.maskable.png",
   "./assets/manifest-icon-512.maskable.png"
 ];
