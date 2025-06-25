@@ -209,18 +209,22 @@ async function syncSnacks() {
     }
 
     let success = 0, fail = 0;
+    const failedSnacks = [];
 
     for (const snack of pending) {
       try {
         console.log('🚀 Tentative de synchro pour :', snack.name);
 
-        const apiUrl = self.location.hostname === 'localhost'
-          ? '/api/snack'
-          : 'https://snackntrack.netlify.app/api/snack';
+        // 🔧 CORRECTION : Meilleure gestion de l'URL API
+        const apiUrl = getApiUrl();
+        console.log('🌐 URL API utilisée:', apiUrl);
 
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({
             name: snack.name,
             mood: snack.mood,
@@ -228,30 +232,63 @@ async function syncSnacks() {
           })
         });
 
+        console.log('📊 Réponse serveur:', response.status, response.statusText);
+
         if (response.ok) {
           console.log('✅ Snack synchronisé :', snack.name);
           await deletePendingSnack(snack.id);
           await notifyClients('snack-synced', { snack });
           success++;
         } else {
-          console.error(`❌ Erreur serveur pour : ${snack.name}`);
+          // 🔧 CORRECTION : Meilleure gestion des erreurs
+          const errorText = await response.text().catch(() => 'Erreur inconnue');
+          console.error(`❌ Erreur serveur ${response.status} pour : ${snack.name}`, errorText);
+          failedSnacks.push({ snack: snack.name, error: `${response.status}: ${errorText}` });
           fail++;
         }
 
       } catch (err) {
-        console.error(`❌ Erreur serveur pour : ${snack.name}`, err);
+        console.error(`❌ Erreur réseau pour : ${snack.name}`, err.message);
+        failedSnacks.push({ snack: snack.name, error: err.message });
         fail++;
       }
     }
 
     console.log(`📈 Sync terminée : ${success} succès / ${fail} échecs`);
-    await notifyClients('sync-completed', { success, errors: fail });
+    
+    if (failedSnacks.length > 0) {
+      console.log('❌ Snacks échoués:', failedSnacks);
+    }
+
+    await notifyClients('sync-completed', { 
+      success, 
+      errors: fail, 
+      failedSnacks: failedSnacks 
+    });
 
   } catch (e) {
     console.error('💥 Erreur globale dans syncSnacks :', e);
     await notifyClients('sync-error', { error: e.message });
     throw e;
   }
+}
+
+// 🔧 NOUVELLE FONCTION : Gestion intelligente de l'URL API
+function getApiUrl() {
+  const currentUrl = new URL(self.location.href);
+  
+  // Environnement de développement
+  if (currentUrl.hostname === 'localhost' || currentUrl.hostname === '127.0.0.1') {
+    return `${currentUrl.origin}/api/snack`;
+  }
+  
+  // Environnement de production Netlify
+  if (currentUrl.hostname.includes('netlify.app')) {
+    return `${currentUrl.origin}/.netlify/functions/snack`;
+  }
+  
+  // Fallback vers l'URL de production
+  return 'https://snackntrack.netlify.app/.netlify/functions/snack';
 }
 
 // 🔔 PUSH NOTIFICATIONS
