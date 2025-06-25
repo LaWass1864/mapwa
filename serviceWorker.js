@@ -188,20 +188,30 @@ async function handleSnackSubmission(request) {
 
 // 🔄 BACKGROUND SYNC
 self.addEventListener('sync', (event) => {
+  console.log('📡 Sync event déclenché pour:', event.tag);
   if (event.tag === 'sync-snacks') {
     event.waitUntil(syncSnacks());
   }
 });
 
 async function syncSnacks() {
+  console.log('🔄 Début de la synchronisation...');
+
   try {
     const pending = await getAllPending();
-    if (pending.length === 0) return;
+    console.log(`📊 ${pending.length} snack(s) à synchroniser`);
+
+    if (pending.length === 0) {
+      console.log('✅ Aucun snack en attente');
+      return;
+    }
 
     let success = 0, fail = 0;
 
     for (const snack of pending) {
       try {
+        console.log('🚀 Tentative de synchro pour :', snack.name);
+
         const response = await fetch('/api/snack', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -213,25 +223,31 @@ async function syncSnacks() {
         });
 
         if (response.ok) {
+          console.log('✅ Snack synchronisé :', snack.name);
           await deletePendingSnack(snack.id);
           await notifyClients('snack-synced', { snack });
           success++;
         } else {
+          console.error(`❌ Erreur serveur pour : ${snack.name}`);
           fail++;
         }
 
       } catch (err) {
+        console.error(`❌ Erreur réseau pour : ${snack.name}`, err);
         fail++;
       }
     }
 
-    await notifyClients('sync-completed', { success, fail });
+    console.log(`📈 Sync terminée : ${success} succès / ${fail} échecs`);
+    await notifyClients('sync-completed', { success, errors: fail });
 
   } catch (e) {
+    console.error('💥 Erreur globale dans syncSnacks :', e);
     await notifyClients('sync-error', { error: e.message });
     throw e;
   }
 }
+
 
 // 🔔 PUSH NOTIFICATIONS
 self.addEventListener('push', function(event) {
