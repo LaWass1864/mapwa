@@ -216,7 +216,7 @@ async function syncSnacks() {
   ? '/api/snack'
   : 'https://snackntrack.netlify.app/api/snack';
 
-const response = await fetch(apiUrl, {
+const response = await fetch('https://snackntrack.netlify.app/api/snack', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
@@ -237,9 +237,9 @@ const response = await fetch(apiUrl, {
         }
 
       } catch (err) {
-        console.error(`❌ Erreur réseau pour : ${snack.name}`, err);
-        fail++;
-      }
+  console.error(`❌ Erreur serveur pour : ${snack.name}`, err);
+  fail++;
+}
     }
 
     console.log(`📈 Sync terminée : ${success} succès / ${fail} échecs`);
