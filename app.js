@@ -201,3 +201,14 @@ window.DEBUG_MODE = true;
 await testBackgroundSync.showPending();
 await testBackgroundSync.simulateOffline(3000);
 
+function testBackgroundSync() {
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.sync.register('sync-snacks')
+        .then(() => console.log('✅ Test manuel de background sync enregistré'))
+        .catch(err => console.error('❌ Erreur lors du test de background sync :', err));
+    });
+  } else {
+    console.warn('⛔ Background Sync non supporté par ce navigateur');
+  }
+}
