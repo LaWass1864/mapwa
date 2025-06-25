@@ -212,14 +212,18 @@ async function syncSnacks() {
       try {
         console.log('🚀 Tentative de synchro pour :', snack.name);
 
-        const response = await fetch('/api/snack', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: snack.name,
-            mood: snack.mood,
-            timestamp: snack.timestamp
-          })
+       const apiUrl = self.location.hostname === 'localhost'
+  ? '/api/snack'
+  : 'https://snackntrack.netlify.app/api/snack';
+
+const response = await fetch(apiUrl, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: snack.name,
+    mood: snack.mood,
+    timestamp: snack.timestamp
+  })
         });
 
         if (response.ok) {
