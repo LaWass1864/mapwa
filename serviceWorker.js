@@ -1,3 +1,5 @@
+// serviceWorker.js
+
 const staticCacheName = "snack-track-v1";
 const assets = [
   "./",
@@ -106,7 +108,7 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   const url = new URL(request.url);
 
-console.log('🕵️ Interception fetch:', request.method, url.pathname);
+  console.log('🕵️ Interception fetch:', request.method, url.pathname);
 
   if (request.method === 'POST' && url.pathname.includes('/api/snack')) {
     event.respondWith(handleSnackSubmission(request));
@@ -212,18 +214,18 @@ async function syncSnacks() {
       try {
         console.log('🚀 Tentative de synchro pour :', snack.name);
 
-       const apiUrl = self.location.hostname === 'localhost'
-  ? '/api/snack'
-  : 'https://snackntrack.netlify.app/api/snack';
+        const apiUrl = self.location.hostname === 'localhost'
+          ? '/api/snack'
+          : 'https://snackntrack.netlify.app/api/snack';
 
-const response = await fetch('https://snackntrack.netlify.app/api/snack', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    name: snack.name,
-    mood: snack.mood,
-    timestamp: snack.timestamp
-  })
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: snack.name,
+            mood: snack.mood,
+            timestamp: snack.timestamp
+          })
         });
 
         if (response.ok) {
@@ -237,9 +239,9 @@ const response = await fetch('https://snackntrack.netlify.app/api/snack', {
         }
 
       } catch (err) {
-  console.error(`❌ Erreur serveur pour : ${snack.name}`, err);
-  fail++;
-}
+        console.error(`❌ Erreur serveur pour : ${snack.name}`, err);
+        fail++;
+      }
     }
 
     console.log(`📈 Sync terminée : ${success} succès / ${fail} échecs`);
@@ -251,7 +253,6 @@ const response = await fetch('https://snackntrack.netlify.app/api/snack', {
     throw e;
   }
 }
-
 
 // 🔔 PUSH NOTIFICATIONS
 self.addEventListener('push', function(event) {
