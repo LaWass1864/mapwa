@@ -145,7 +145,5 @@ function afficherNotificationSnackAjoute(nomSnack) {
     });
   }
 }
-// Demander la persmission au lancement de 'lapp 
-
 
 
