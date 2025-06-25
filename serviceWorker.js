@@ -1,14 +1,13 @@
 const staticCacheName = "snack-track-v1";
 const assets = [
   "./",
-  "./index.html",
-  "./idb.js",
-  "./app.js",
-  "./mes-humeurs.html",
-  "./mes-humeurs.js",
-  "./style.css",
-  "./offline.html",
-  "./manifest.json",
+  "/index.html",
+  "/app.js",
+  "/mes-humeurs.html",
+  "/mes-humeurs.js",
+  "/style.css",
+  "/offline.html",
+  "/manifest.json",
   "./assets/manifest-icon-192.maskable.png",
   "./assets/manifest-icon-512.maskable.png"
 ];
@@ -27,7 +26,11 @@ function openDB() {
 
 async function getAllPending() {
   const db = await openDB();
-  return db.transaction('pending').objectStore('pending').getAll();
+  return new Promise((resolve, reject) => {
+    const request = db.transaction('pending').objectStore('pending').getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
 }
 
 async function clearPending() {

@@ -1,4 +1,4 @@
-// idb.js amélioré
+// idb.js - Gestion d'IndexedDB pour Snack'n'Track
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -213,7 +213,23 @@ async function debugDB() {
   }
 }
 
-// Export pour utilisation côté client (si modules ES6)
+// Export par défaut pour l'import ES6
+export default addPending;
+
+// Exports nommés pour utilisation avancée
+export {
+  openDB,
+  getAllPending,
+  getPendingCount,
+  addPending,
+  deletePending,
+  clearPending,
+  getPendingById,
+  markAsSynced,
+  debugDB
+};
+
+// Export CommonJS pour compatibilité
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     openDB,

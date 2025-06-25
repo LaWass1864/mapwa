@@ -1,16 +1,15 @@
 // Vérifie que le navigateur supporte les service workers.
-import { addPending } from './idb.js';
-
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
     .then(reg => {
       console.log('✅ Service Worker enregistré', reg);
 
       if ('Notification' in window) {
-  Notification.requestPermission().then(permission => {
-    console.log("📢 Permission notification :", permission);
-  });
-}
+        Notification.requestPermission().then(permission => {
+          console.log("📢 Permission notification :", permission);
+        });
+      }
+
       // 🔄 Rechargement si update
       reg.onupdatefound = () => {
         const newWorker = reg.installing;
@@ -29,17 +28,34 @@ if ('serviceWorker' in navigator) {
           }
         };
       };
+
+      // 📨 Écouter les messages du service worker
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        const { type, data } = event.data;
+        
+        switch (type) {
+          case 'snack-saved-offline':
+            console.log('📴 Snack sauvegardé offline:', data);
+            showOfflineMessage();
+            break;
+          case 'snack-synced':
+            console.log('🔄 Snack synchronisé:', data);
+            break;
+          case 'sync-completed':
+            console.log('✅ Synchronisation terminée:', data);
+            hideOfflineMessage();
+            break;
+        }
+      });
     })
     .catch(err => console.error('❌ Erreur Service Worker :', err));
 }
 
-// === TOUT LE RESTE DE L’APP ===
-
+// === VARIABLES GLOBALES ===
 const form = document.getElementById('snack-form');
 const snackList = document.getElementById('snack-list');
 const nameInput = document.getElementById('snack-name');
 const moodInput = document.getElementById('snack-mood');
-
 
 function generateId() {
   return Date.now().toString();
@@ -51,6 +67,12 @@ function createSnackElement(snack) {
   li.style.cursor = 'pointer';
   li.title = 'Clique pour supprimer';
   li.dataset.id = snack.id;
+
+  // Ajouter indicateur offline si nécessaire
+  if (snack.offline) {
+    li.style.opacity = '0.7';
+    li.title += ' (en attente de synchronisation)';
+  }
 
   li.addEventListener('click', () => {
     if (confirm('Supprimer ce snack ?')) {
@@ -73,6 +95,27 @@ function refreshSnackList() {
   });
 }
 
+function showOfflineMessage() {
+  let offlineDiv = document.getElementById('offline-message');
+  if (!offlineDiv) {
+    offlineDiv = document.createElement('div');
+    offlineDiv.id = 'offline-message';
+    offlineDiv.innerHTML = `
+      <div style="background:#ff6b6b; color:white; padding:0.5rem; text-align:center; font-size:0.9rem;">
+        📴 Mode hors ligne - Les données seront synchronisées automatiquement
+      </div>
+    `;
+    document.body.prepend(offlineDiv);
+  }
+}
+
+function hideOfflineMessage() {
+  const offlineDiv = document.getElementById('offline-message');
+  if (offlineDiv) {
+    offlineDiv.remove();
+  }
+}
+
 // Chargement initial
 refreshSnackList();
 
@@ -82,7 +125,12 @@ form.addEventListener('submit', async (e) => {
   const mood = moodInput.value.trim();
   if (!name || !mood) return;
 
-  const newSnack = { id: generateId(), name, mood };
+  const newSnack = { 
+    id: generateId(), 
+    name, 
+    mood,
+    timestamp: new Date().toISOString()
+  };
 
   // Affiche immédiatement dans la liste + localStorage
   const snacks = JSON.parse(localStorage.getItem('snacks')) || [];
@@ -92,24 +140,25 @@ form.addEventListener('submit', async (e) => {
   form.reset();
   afficherNotificationSnackAjoute(name);
 
-  // Gestion réseau / offline
-  if (navigator.onLine) {
-    try {
-      await fetch('/api/snack', {
-        method: 'POST',
-        body: JSON.stringify(newSnack),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log("✅ Snack envoyé !");
-    } catch (err) {
-      console.warn("❌ Erreur d'envoi immédiat, enregistrement local");
-      await addPending(newSnack);
-      (await navigator.serviceWorker.ready).sync.register('sync-snacks');
+  // ⚠️ CORRECTION: Utiliser FormData pour correspondre au service worker
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('mood', mood);
+
+  try {
+    const response = await fetch('/api/snack', {
+      method: 'POST',
+      body: formData  // ✅ FormData au lieu de JSON
+    });
+
+    if (response.ok) {
+      console.log("✅ Snack envoyé en ligne !");
+    } else {
+      throw new Error(`Erreur ${response.status}`);
     }
-  } else {
-    console.warn("📴 Offline : enregistrement local");
-    await addPending(newSnack);
-    (await navigator.serviceWorker.ready).sync.register('sync-snacks');
+  } catch (err) {
+    console.warn("❌ Erreur réseau, gestion par le service worker");
+    // Le service worker va automatiquement gérer l'offline
   }
 });
 
@@ -135,8 +184,6 @@ function readCSV() {
   reader.readAsText(fileInput.files[0]);
 }
 
-//ajouter une notification locale simple quand un snack est ajouté.
-
 function afficherNotificationSnackAjoute(nomSnack) {
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification("Snack ajouté 🥳", {
@@ -146,4 +193,10 @@ function afficherNotificationSnackAjoute(nomSnack) {
   }
 }
 
+// Ajoute ça dans ton app.js en local
+console.log('🧪 Mode DEBUG activé');
+window.DEBUG_MODE = true;
 
+// Utilise les fonctions de test que j'ai données
+await testBackgroundSync.showPending();
+await testBackgroundSync.simulateOffline(3000);
