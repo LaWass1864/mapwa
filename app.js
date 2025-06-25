@@ -1,4 +1,6 @@
 // Vérifie que le navigateur supporte les service workers.
+import { addPending } from './idb.js';
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
     .then(reg => {

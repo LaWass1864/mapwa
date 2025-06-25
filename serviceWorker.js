@@ -2,6 +2,8 @@ const staticCacheName = "snack-track-v1";
 const assets = [
   "./",
   "./index.html",
+  "./idb.js",
+  ".app.js",
   "./mes-humeurs.html",
   "./mes-humeurs.js",
   "./style.css",
@@ -9,7 +11,7 @@ const assets = [
   "./manifest.json",
   "./assets/manifest-icon-192.maskable.png",
   "./assets/manifest-icon-512.maskable.png"
-  // Ajoutez ici tous les autres fichiers nécessaires (JS, CSS, images)
+  
 ];
 
 // INSTALL
