@@ -200,3 +200,4 @@ window.DEBUG_MODE = true;
 // Utilise les fonctions de test que j'ai données
 await testBackgroundSync.showPending();
 await testBackgroundSync.simulateOffline(3000);
+

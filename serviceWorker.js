@@ -106,6 +106,8 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   const url = new URL(request.url);
 
+console.log('🕵️ Interception fetch:', request.method, url.pathname);
+
   if (request.method === 'POST' && url.pathname.includes('/api/snack')) {
     event.respondWith(handleSnackSubmission(request));
     return;
