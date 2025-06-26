@@ -1,3 +1,4 @@
+
 // Vérifie que le navigateur supporte les service workers.
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
