@@ -17,15 +17,12 @@
   "client_mode": "auto"
 },
   "file_handlers": [
-    {
-      "action": "/handle-csv",
-      "accept": {
-        "text/csv": [".csv"],
-        "application/csv": [".csv"],
-        "text/comma-separated-values": [".csv"]
-      },
-      "launch_type": "single-client"
+   {
+    "action": "/open.html",  
+    "accept": {
+      "text/csv": [".csv"]
     }
+  }
   ],
 
 "screenshots": [
