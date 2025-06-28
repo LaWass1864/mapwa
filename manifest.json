@@ -18,12 +18,13 @@
 },
   "file_handlers": [
     {
-      "action": "/open",
+      "action": "/handle-csv",
       "accept": {
-        "text/csv": [
-          ".csv"
-        ]
-      }
+        "text/csv": [".csv"],
+        "application/csv": [".csv"],
+        "text/comma-separated-values": [".csv"]
+      },
+      "launch_type": "single-client"
     }
   ],
 
