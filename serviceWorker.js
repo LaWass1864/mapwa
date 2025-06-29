@@ -240,7 +240,7 @@ async function syncSnacks() {
           await notifyClients('snack-synced', { snack });
           success++;
         } else {
-          // 🔧 CORRECTION : Meilleure gestion des erreurs
+          // CORRECTION : Meilleure gestion des erreurs
           const errorText = await response.text().catch(() => 'Erreur inconnue');
           console.error(`❌ Erreur serveur ${response.status} pour : ${snack.name}`, errorText);
           failedSnacks.push({ snack: snack.name, error: `${response.status}: ${errorText}` });
@@ -273,7 +273,7 @@ async function syncSnacks() {
   }
 }
 
-// 🔧 NOUVELLE FONCTION : Gestion intelligente de l'URL API
+// NOUVELLE FONCTION : Gestion intelligente de l'URL API
 function getApiUrl() {
   const currentUrl = new URL(self.location.href);
   

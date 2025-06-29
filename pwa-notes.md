@@ -32,3 +32,6 @@ https://convertio.co/fr/svg-png/
 https://cloudconvert.com/svg-to-png
 
 Tu peux spécifier la résolution 1024x1024 selon les outils
+
+<!-- Commandes github -->
+<!-- creer une branche --> $ git remote add [name_of_your_remote] [name_of_your_new_branch]

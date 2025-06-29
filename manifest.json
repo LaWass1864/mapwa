@@ -56,26 +56,30 @@
     }
   },
 
-   "shortcuts": [
+ "shortcuts": [
     {
       "name": "Ajouter un snack",
       "short_name": "Ajout snack",
       "description": "Accéder rapidement à l'ajout de snack",
-      "url": "/ajouter-snack",
+      "url": "/index.html",
       "icons": [
         {
-          "src": "assets/manifest-icon-192.maskable.png",
-          "sizes": "192x192"
+          "src": "/assets/manifest-icon-192.maskable.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     },
     {
       "name": "Voir mes humeurs",
-    "url": "/mes-humeurs.html",
-    "icons": [{
-      "src": "assets/manifest-icon-192.maskable.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "short_name": "Mes humeurs",
+      "description": "Accéder à mes humeurs",
+      "url": "/mes-humeurs.html",
+      "icons": [
+        {
+          "src": "/assets/manifest-icon-192.maskable.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
