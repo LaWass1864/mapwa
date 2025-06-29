@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deep Linking</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Page ouverte via Deep-Link</h1>
+  <div id="output">Chargement des paramètres...</div>
+
+  <script>
+    (async () => {
+      // récupère la query string, ex: ?id=42&name=Alice
+      const queryString = window.location.search;
+
+      // crée un objet URLSearchParams pour parser la query
+      const params = new URLSearchParams(queryString);
+
+      const output = document.getElementById("output");
+      output.innerHTML = "";
+
+      // si on a des paramètres, on les affiche
+      if ([...params].length) {
+        for (let [key, value] of params.entries()) {
+          output.innerHTML += `<p><strong>${key}</strong> : ${value}</p>`;
+        }
+      } else {
+        output.textContent = "Aucun paramètre dans l'URL.";
+      }
+    })();
+  </script>
+</body>
+</html>
