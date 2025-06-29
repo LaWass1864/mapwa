@@ -1,5 +1,3 @@
-<!-- creation d'un dossier assets a la racine du projet -->
-mkdir assets 
 
 <!-- Choisir un icone 1024*1024 -->
 Nommer ce fichier : logo.png et le déposer dans assets/
@@ -34,4 +32,5 @@ https://cloudconvert.com/svg-to-png
 Tu peux spécifier la résolution 1024x1024 selon les outils
 
 <!-- Commandes github -->
-<!-- creer une branche --> $ git remote add [name_of_your_remote] [name_of_your_new_branch]
+<!-- Creer une branche --> $ git remote add [name_of_your_remote] [name_of_your_new_branch]
+<!-- creation d'un dossier assets a la racine du projet --> mkdir assets 
