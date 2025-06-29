@@ -39,18 +39,15 @@
     "form_factor": "narrow"
   }
 ],
-  "share_target": {
-    "action": "/share",
+   "share_target": {
+    "action": "https://ton-backend.onrender.com/share",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
       "files": [
         {
           "name": "file",
-          "accept": [
-            "image/*",
-            "text/csv"
-          ]
+          "accept": ["image/*", "text/csv"]
         }
       ]
     }
