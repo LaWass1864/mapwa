@@ -1,7 +1,7 @@
 {
   "name": "Snack'n'Track",
   "short_name": "S&T",
-  "start_url": "/index.html",
+ "start_url": "/",
   "background_color": "#f77f00",
   "theme_color": "#f77f00",
   "orientation": "any",
