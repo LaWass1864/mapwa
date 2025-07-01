@@ -9,7 +9,6 @@ if ('serviceWorker' in navigator) {
 navigator.serviceWorker.addEventListener('message', (event) => {
   console.log('📬 Message SW:', event.data);
   if (event.data?.type === 'snack-synced') {
-    alert(`🎉 Snack synchronisé: ${event.data.data.name}`);
     addSnackToList(event.data.data.name, event.data.data.mood);
   }
   if (event.data?.type === 'sync-completed') {
@@ -34,21 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
         body: new URLSearchParams({ name, mood })
       });
 
-      if (response.ok) {
-        addSnackToList(name, mood);
-        form.reset();
-      } else {
-        alert('⚠ Erreur serveur');
+      addSnackToList(name, mood);  // on ajoute toujours en local
+
+      if (!response.ok) {
+        console.warn('⚠ Le serveur a renvoyé une erreur');
       }
     } catch (err) {
       console.error('❌ Erreur réseau', err);
       alert('⚠ Erreur réseau ou hors-ligne.');
     }
+
+    form.reset();
   });
 
   function addSnackToList(name, mood) {
     const li = document.createElement('li');
-    li.textContent = `${name} (${mood})`;
+    li.textContent = `🍪 ${name} (${mood})`;
     snackList.appendChild(li);
   }
 });
@@ -68,9 +68,7 @@ document.querySelector('#csvFile')?.addEventListener('change', (e) => {
       li.textContent = line.trim();
       const btn = document.createElement('button');
       btn.textContent = '❌ Retirer';
-      btn.addEventListener('click', () => {
-        li.remove();
-      });
+      btn.addEventListener('click', () => li.remove());
       li.appendChild(btn);
       participantsList.appendChild(li);
     });
