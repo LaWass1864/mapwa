@@ -40,7 +40,7 @@ function setupForm() {
       formData.append('mood', mood);
       
       // Envoyer vers l'API (intercepté par le SW si hors ligne)
-      const response = await fetch('https://snackntrack.netlify.app/.netlify/functions/snack', {
+      const response = await fetch('/api/snack', {
         method: 'POST',
         body: formData
       });

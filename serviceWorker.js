@@ -133,7 +133,7 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  if (request.method === 'POST' && url.pathname.includes('/api/snack')) {
+  if (request.method === 'POST' && (url.pathname.includes('/api/snack') || url.pathname.includes('/.netlify/functions/snack'))) {
     event.respondWith(handleSnackSubmission(request));
     return;
   }
@@ -169,36 +169,59 @@ self.addEventListener('fetch', (event) => {
 
 // ============ HANDLE SNACK SUBMISSION ==============
 async function handleSnackSubmission(request) {
+  console.log('🔥 handleSnackSubmission appelée');
+  
   try {
     const response = await fetch(request.clone());
-    if (response.ok) return response;
-    throw new Error(`Erreur ${response.status}`);
-  } catch {
-    const formData = await request.formData();
-    const snackData = {
-      id: Date.now().toString(),
-      name: formData.get('name') || formData.get('snack'),
-      mood: formData.get('mood') || formData.get('humeur'),
-      timestamp: new Date().toISOString(),
-      synced: false
-    };
-    
-    await savePendingSnack(snackData);
-    
-    if ('sync' in self.registration) {
-      await self.registration.sync.register('sync-snacks');
+    if (response.ok) {
+      console.log('✅ Requête en ligne réussie');
+      return response;
     }
+    throw new Error(`Erreur ${response.status}`);
+  } catch (error) {
+    console.log('📱 Mode hors ligne détecté, sauvegarde locale...');
     
-    await notifyClients('snack-saved-offline', snackData);
-    
-    return new Response(JSON.stringify({
-      success: true,
-      offline: true,
-      message: 'Snack sauvegardé hors ligne'
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    try {
+      const formData = await request.formData();
+      console.log('📝 FormData récupérée:', {
+        name: formData.get('name'),
+        mood: formData.get('mood')
+      });
+      
+      const snackData = {
+        id: Date.now().toString(),
+        name: formData.get('name') || formData.get('snack'),
+        mood: formData.get('mood') || formData.get('humeur'),
+        timestamp: new Date().toISOString(),
+        synced: false
+      };
+      
+      console.log('💾 Données à sauvegarder:', snackData);
+      
+      await savePendingSnack(snackData);
+      console.log('✅ savePendingSnack terminé');
+      
+      if ('sync' in self.registration) {
+        await self.registration.sync.register('sync-snacks');
+        console.log('🔄 Background sync enregistré');
+      }
+      
+      await notifyClients('snack-saved-offline', snackData);
+      console.log('📱 Clients notifiés');
+      
+      return new Response(JSON.stringify({
+        success: true,
+        offline: true,
+        message: 'Snack sauvegardé hors ligne'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+    } catch (saveError) {
+      console.error('❌ Erreur lors de la sauvegarde:', saveError);
+      throw saveError;
+    }
   }
 }
 
