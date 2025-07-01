@@ -2,7 +2,7 @@ import webpush from 'web-push';
 
 // Mets ici ta nouvelle paire
 const vapidKeys = {
-  publicKey: 'BMnwOXoysNEVu4sUTTkE6edap3ZElP6613NP_6pTKihCLt7b53HxJYpETGzww0XXIAM1mvUqLZ_gKQcjlm_PO-4',
+  publicKey: 'BHtV1ZOgEUZjZMLdW1wQ4zVlQitY-S9TLCaBdQ3BSP5_QhtxRJkaJN0ooJVoI9uLtGufRBwAy3bPLzBuvvoAJiM',
   privateKey: 'p3GhiaGJT4ZzrOqpQVuVi32VDgCYx0an3fXnhYg38xs'
 };
 
