@@ -1,25 +1,16 @@
-// ============= REGISTRATION SW ============
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
-    .then(reg => console.log('✅ Service Worker enregistré', reg))
-    .catch(err => console.error('❌ Erreur enregistrement SW:', err));
+    .then(reg => console.log('✅ SW enregistré', reg))
+    .catch(err => console.error('❌ SW non enregistré:', err));
 }
 
-// ============= LISTEN TO SW MESSAGES ============
-navigator.serviceWorker.addEventListener('message', (event) => {
-  console.log('📬 Message SW:', event.data);
-  if (event.data?.type === 'snack-synced') {
-    addSnackToList(event.data.data.name, event.data.data.mood);
-  }
-  if (event.data?.type === 'sync-completed') {
-    console.log(`✅ Synchronisation terminée: ${event.data.data.success} succès, ${event.data.data.errors} erreurs`);
-  }
-});
+// Récupération localStorage pour snacks
+const snackList = document.querySelector('#snack-list');
+let snacks = JSON.parse(localStorage.getItem('snacks')) || [];
+snacks.forEach(snack => addSnackToUI(snack.name, snack.mood));
 
-// ============= FORM SNACK ============
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('#snack-form');
-  const snackList = document.querySelector('#snack-list');
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -27,69 +18,70 @@ document.addEventListener('DOMContentLoaded', () => {
     const mood = document.querySelector('#snack-mood').value.trim();
     if (!name || !mood) return;
 
+    // On ajoute direct à l’UI + localStorage
+    snacks.push({ name, mood });
+    localStorage.setItem('snacks', JSON.stringify(snacks));
+    addSnackToUI(name, mood);
+
     try {
       const response = await fetch('/api/snack', {
         method: 'POST',
         body: new URLSearchParams({ name, mood })
       });
-
-      addSnackToList(name, mood);  // on ajoute toujours en local
-
       if (!response.ok) {
-        console.warn('⚠ Le serveur a renvoyé une erreur');
+        console.warn('⚠ Serveur hors ligne ou erreur');
       }
-    } catch (err) {
-      console.error('❌ Erreur réseau', err);
-      alert('⚠ Erreur réseau ou hors-ligne.');
+    } catch {
+      console.warn('🌐 Offline, le SW gérera via IndexedDB + Sync');
     }
 
     form.reset();
   });
+});
 
-  function addSnackToList(name, mood) {
-    const li = document.createElement('li');
-    li.textContent = `🍪 ${name} (${mood})`;
-    snackList.appendChild(li);
+function addSnackToUI(name, mood) {
+  const li = document.createElement('li');
+  li.textContent = `🍪 ${name} (${mood})`;
+  snackList.appendChild(li);
+}
+
+// Réagir aux messages SW (pour syncs)
+navigator.serviceWorker.addEventListener('message', (event) => {
+  console.log('📬 SW message:', event.data);
+  if (event.data?.type === 'snack-synced') {
+    snacks.push({ name: event.data.data.name, mood: event.data.data.mood });
+    localStorage.setItem('snacks', JSON.stringify(snacks));
+    addSnackToUI(event.data.data.name, event.data.data.mood);
   }
 });
 
-// ============= READ CSV FOR PARTICIPANTS ============
-document.querySelector('#csvFile')?.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const lines = event.target.result.split('\n').filter(l => l.trim());
-    const participantsList = document.querySelector('#participants');
-    participantsList.innerHTML = '';
-    lines.forEach(line => {
-      const li = document.createElement('li');
-      li.textContent = line.trim();
-      const btn = document.createElement('button');
-      btn.textContent = '❌ Retirer';
-      btn.addEventListener('click', () => li.remove());
-      li.appendChild(btn);
-      participantsList.appendChild(li);
-    });
-  };
-  reader.readAsText(file);
-});
-
-// ============= TEST BACKGROUND SYNC ============
+// ==================== Test Background Sync manuel
 function testBackgroundSync() {
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
     navigator.serviceWorker.ready.then(reg => {
       reg.sync.register('sync-snacks').then(() => {
-        console.log('✅ Background Sync forcé');
-        alert('🚀 Sync enregistrée (sera déclenchée quand réseau OK)');
+        console.log('✅ Sync forcée enregistrée');
+        alert('🚀 Sync enregistrée (sera faite dès réseau dispo)');
       }).catch(err => {
-        console.error('❌ Erreur register sync:', err);
-        alert('⚠ Sync non disponible');
+        console.error('❌ Impossible de déclencher la sync:', err);
       });
     });
   } else {
-    alert('❌ Background Sync non supporté.');
+    alert('⚠ SyncManager non supporté');
   }
 }
 window.testBackgroundSync = testBackgroundSync;
+
+// ==================== Test Notification locale
+function notifyMe() {
+  if (!('Notification' in window)) return alert('🙅 Notifications non supportées.');
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      new Notification("Snack'n'Track 🍪", {
+        body: "Ceci est une notif locale test",
+        icon: "./assets/manifest-icon-192.maskable.png"
+      });
+    }
+  });
+}
+window.notifyMe = notifyMe;
