@@ -42,7 +42,7 @@ async function getAllPending() {
     return new Promise((resolve, reject) => {
       const request = store.getAll();
       request.onsuccess = () => {
-        // Filtre seulement les snacks non synchronisés
+        // Filtre seulement les snacks non synchronisés, qui resteront en cache
         const pendingSnacks = request.result.filter(snack => !snack.synced);
         resolve(pendingSnacks);
       };
