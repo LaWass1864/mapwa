@@ -135,6 +135,19 @@ async function syncSnacks() {
   }
 }
 
+// ============ ASSURER L'OUVERTURE DU STORE ==============
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('snacksDB', 2);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore('snacks', { keyPath: 'id', autoIncrement: true });
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 // ============ PUSH ==============
 self.addEventListener('push', (event) => {
   const data = event.data?.json() || {};
@@ -146,3 +159,4 @@ self.addEventListener('push', (event) => {
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });
+
