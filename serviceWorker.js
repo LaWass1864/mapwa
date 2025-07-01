@@ -138,11 +138,15 @@ async function syncSnacks() {
 // ============ ASSURER L'OUVERTURE DU STORE ==============
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('snacksDB', 2);
+    const request = indexedDB.open('snacksDB', 2); // incrémente bien ici
+
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      db.createObjectStore('snacks', { keyPath: 'id', autoIncrement: true });
+      if (!db.objectStoreNames.contains('snacks')) {
+        db.createObjectStore('snacks', { keyPath: 'id', autoIncrement: true });
+      }
     };
+
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
