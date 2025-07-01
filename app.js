@@ -32,3 +32,4 @@ function addSnackToUI(name, mood) {
   li.textContent = `🍪 ${name} (${mood})`;
   snackList.appendChild(li);
 }
+
