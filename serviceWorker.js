@@ -276,15 +276,3 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Le backgroundSync reagit 
-
-if ('serviceWorker' in navigator && 'SyncManager' in window) {
-  navigator.serviceWorker.ready.then(reg => {
-    return reg.sync.register('syncMesDonnees');
-  }).then(() => {
-    console.log('Sync enregistré');
-  }).catch(err => {
-    console.error('Erreur en enregistrant le sync', err);
-  });
-}
-
