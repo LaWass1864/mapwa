@@ -33,3 +33,12 @@ function addSnackToUI(name, mood) {
   snackList.appendChild(li);
 }
 
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+  navigator.serviceWorker.ready.then(reg => {
+    reg.sync.register('sync-snacks').then(() => {
+      console.log('✅ Sync enregistrée pour les snacks');
+    }).catch(err => {
+      console.error('❌ Impossible de programmer la sync:', err);
+    });
+  });
+}

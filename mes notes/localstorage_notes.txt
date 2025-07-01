@@ -1,0 +1,59 @@
+=========================================
+Notes - Implémentation LocalStorage PWA
+=========================================
+
+Objectif :
+----------
+Utiliser LocalStorage pour stocker localement les snacks (nom + humeur)
+dans la PWA, afin qu'ils persistent même après fermeture du navigateur
+et sans dépendre du réseau.
+
+-----------------------------------------
+Structure :
+-----------
+- Les données sont enregistrées sous forme de tableau JSON,
+  sérialisé sous la clé "snacks" dans LocalStorage.
+
+-----------------------------------------
+Fonctionnement :
+----------------
+1. Au chargement de la page :
+   - Le script récupère localStorage.getItem('snacks')
+   - Parse les données et les affiche dans la liste HTML.
+
+2. Lors de la soumission du formulaire :
+   - On récupère les valeurs du nom et de l’humeur.
+   - On les ajoute au tableau existant.
+   - On sauvegarde le tableau mis à jour avec localStorage.setItem.
+
+3. Au rechargement :
+   - Les snacks sont automatiquement affichés,
+     car relus depuis LocalStorage.
+
+-----------------------------------------
+Test et vérification :
+----------------------
+- Ouvrir DevTools > Application > Local Storage
+- Vérifier que la clé "snacks" existe et contient un tableau JSON.
+- Taper dans la console : localStorage.getItem('snacks')
+- Pour tout réinitialiser : localStorage.clear() ou localStorage.removeItem('snacks')
+
+-----------------------------------------
+Avantages :
+-----------
+- Simple à implémenter et suffisant pour de petites données.
+- Résiste aux rechargements et fonctionne même offline.
+
+Limites :
+---------
+- Capacité limitée (~5 Mo selon navigateurs).
+- Pas structuré pour des requêtes complexes comme IndexedDB.
+
+-----------------------------------------
+A venir :
+---------
+- Passage à IndexedDB pour stocker des données structurées et
+  supporter le Background Sync et la synchronisation offline/online.
+- Implémentation future des Push Notifications.
+
+=========================================
