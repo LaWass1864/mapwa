@@ -4,6 +4,7 @@ const assets = [
   "./",
   "./index.html",
   "./app.js",
+  "./idb.js",
   "./mes-humeurs.html",
   "/mes-humeurs.js",
   "./style.css",
