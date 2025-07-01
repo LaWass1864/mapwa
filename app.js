@@ -178,3 +178,34 @@ function backupToLocalStorage() {
 
 // Sauvegarder toutes les 30 secondes
 setInterval(backupToLocalStorage, 30000);
+
+// enregistrer le sync dans ton script principal
+
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+  navigator.serviceWorker.ready.then(reg => {
+    return reg.sync.register('syncMesDonnees');
+  }).then(() => {
+    console.log('Sync enregistré');
+  }).catch(err => {
+    console.error('Erreur en enregistrant le sync', err);
+  });
+}
+
+function lireDepuisIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('MaDB', 1);
+
+    request.onerror = () => reject('Erreur ouverture DB');
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const tx = db.transaction('formulaires', 'readonly');
+      const store = tx.objectStore('formulaires');
+      const getAll = store.getAll();
+
+      getAll.onsuccess = () => {
+        resolve(getAll.result);
+      };
+      getAll.onerror = () => reject('Erreur lecture données');
+    };
+  });
+}
