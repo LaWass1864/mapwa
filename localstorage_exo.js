@@ -4,7 +4,7 @@
 
 self.addEventListener('______', event => { // indice: quand le SW est installé
   console.log(' Service Worker installé');
-  self.______( ); // indice: forcer à prendre le contrôle immédiatement
+  self.skipWaiting( ); // indice: forcer à prendre le contrôle immédiatement
 });
 
 // <!-- Écouter l'activation du SW -->
