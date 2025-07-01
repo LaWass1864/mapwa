@@ -138,7 +138,8 @@ async function syncSnacks() {
 // ============ ASSURER L'OUVERTURE DU STORE ==============
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('snacksDB', 2); // incrémente bien ici
+    // INCRÉMENTE LA VERSION : mets 3, 4, 5... si besoin pour déclencher l'upgrade
+    const request = indexedDB.open('snacksDB', 3);
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
@@ -151,6 +152,7 @@ function openDB() {
     request.onerror = () => reject(request.error);
   });
 }
+
 
 // ============ PUSH ==============
 self.addEventListener('push', (event) => {
