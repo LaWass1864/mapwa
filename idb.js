@@ -1,7 +1,7 @@
 /*** ouvre automatiquement ta DB snacksDB,
 Crée un objectStore appelé snacks avec clé auto-incrémentée id,
 Permet d’ajouter un snack avec addSnack({ name, mood }),
-Et de lire toute la liste avec getAllSnacks().
+Et de lire toute la liste avecfzefzfr getAllSnacks().
  */
 
 export function openDB() {
