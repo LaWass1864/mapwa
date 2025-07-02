@@ -40,7 +40,7 @@ function setupForm() {
       formData.append('name', name);
       formData.append('mood', mood);
       
-      const response = await fetch('/api/snack', {
+      const response = await fetch('/.netlify/functions/snack', {
         method: 'POST',
         body: formData
       });
@@ -59,7 +59,8 @@ function setupForm() {
       
     } catch (error) {
       console.error('❌ Erreur soumission:', error);
-      showMessage('❌ Erreur lors de l\'ajout', 'error');
+      console.error('❌ Détails:', error.message);
+      showMessage(`❌ Erreur: ${error.message}`, 'error');
     }
   });
 }
