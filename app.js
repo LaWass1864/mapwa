@@ -1,4 +1,6 @@
-// app.js - Version corrigée pour IndexedDB
+// app.js - Version finale avec import idb.js
+import { getAllSnacks, addSnack } from './idb.js';
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/serviceWorker.js')
     .then(reg => console.log('✅ SW enregistré', reg))
@@ -34,12 +36,10 @@ function setupForm() {
     console.log('📝 Envoi du snack:', { name, mood });
     
     try {
-      // Créer FormData pour l'envoi
       const formData = new FormData();
       formData.append('name', name);
       formData.append('mood', mood);
       
-      // Envoyer vers l'API (intercepté par le SW si hors ligne)
       const response = await fetch('/api/snack', {
         method: 'POST',
         body: formData
@@ -52,7 +52,6 @@ function setupForm() {
         showMessage('📱 Snack sauvegardé hors ligne !', 'warning');
       } else {
         showMessage('✅ Snack ajouté avec succès !', 'success');
-        // Ajouter à la liste locale immédiatement
         addSnackToUI(name, mood);
       }
       
@@ -83,33 +82,73 @@ function setupServiceWorkerListener() {
         case 'snack-synced':
           console.log('🔄 Snack synchronisé:', data);
           showMessage(`🔄 ${data.name} synchronisé !`, 'success');
+          // Recharger la liste après sync
+          loadSnacks();
           break;
       }
     });
   }
 }
 
-// ============ CHARGEMENT DES SNACKS ============
+// ============ CHARGEMENT DES SNACKS (FONCTION CORRIGÉE) ============
 async function loadSnacks() {
   try {
-    // Essayer de charger depuis l'API
-    const response = await fetch('https://snackntrack.netlify.app/.netlify/functions/get-snacks');
+    console.log('📱 Chargement des snacks...');
     
-    if (response.ok) {
-      const data = await response.json();
-      snacks = data.snacks || [];
-      console.log('✅ Snacks chargés depuis l\'API:', snacks.length);
-    } else {
-      throw new Error('API non disponible');
+    // 1. Charger depuis IndexedDB (via idb.js)
+    let localSnacks = [];
+    try {
+      localSnacks = await getAllSnacks();
+      console.log('📦 Snacks depuis IndexedDB:', localSnacks.length);
+    } catch (error) {
+      console.error('❌ Erreur IndexedDB:', error);
     }
+    
+    // 2. Charger depuis localStorage (backup)
+    const backupSnacks = JSON.parse(localStorage.getItem('snacks')) || [];
+    console.log('💾 Snacks depuis localStorage:', backupSnacks.length);
+    
+    // 3. Essayer l'API (si en ligne)
+    let apiSnacks = [];
+    try {
+      const response = await fetch('https://snackntrack.netlify.app/.netlify/functions/get-snacks');
+      if (response.ok) {
+        const data = await response.json();
+        apiSnacks = data.snacks || [];
+        console.log('✅ Snacks depuis API:', apiSnacks.length);
+      }
+    } catch (error) {
+      console.log('📱 API non disponible');
+    }
+    
+    // 4. Fusionner les sources (éviter doublons)
+    const allSnacks = [...apiSnacks, ...localSnacks, ...backupSnacks];
+    
+    // Déduplication simple par nom + mood
+    const uniqueSnacks = allSnacks.filter((snack, index, self) => 
+      index === self.findIndex(s => 
+        s.name === snack.name && 
+        s.mood === snack.mood
+      )
+    );
+    
+    snacks = uniqueSnacks;
+    console.log('🍪 Total snacks uniques:', snacks.length);
+    
+    // 5. Afficher dans l'UI
+    snackList.innerHTML = '';
+    snacks.forEach(snack => addSnackToUI(snack.name, snack.mood));
+    
+    // 6. Sauvegarder dans localStorage comme backup
+    localStorage.setItem('snacks', JSON.stringify(snacks));
+    
   } catch (error) {
-    console.log('📱 API non disponible, chargement depuis localStorage');
-    // Fallback sur localStorage
+    console.error('❌ Erreur loadSnacks:', error);
+    // Fallback localStorage uniquement
     snacks = JSON.parse(localStorage.getItem('snacks')) || [];
+    snackList.innerHTML = '';
+    snacks.forEach(snack => addSnackToUI(snack.name, snack.mood));
   }
-  
-  // Afficher les snacks
-  snacks.forEach(snack => addSnackToUI(snack.name, snack.mood));
 }
 
 // ============ AFFICHAGE UI ============
@@ -121,12 +160,10 @@ function addSnackToUI(name, mood) {
 }
 
 function showMessage(message, type = 'info') {
-  // Créer un élément de notification
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   notification.textContent = message;
   
-  // Styles basiques
   notification.style.cssText = `
     position: fixed;
     top: 20px;
@@ -143,7 +180,6 @@ function showMessage(message, type = 'info') {
   
   document.body.appendChild(notification);
   
-  // Supprimer après 3 secondes
   setTimeout(() => {
     notification.remove();
   }, 3000);
@@ -170,13 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ============ SAUVEGARDE DE SECOURS ============
-// Sauvegarder périodiquement dans localStorage comme backup
-function backupToLocalStorage() {
-  localStorage.setItem('snacks', JSON.stringify(snacks));
-}
-
-// Sauvegarder toutes les 30 secondes
-setInterval(backupToLocalStorage, 30000);
-
-
+// ============ SAUVEGARDE PÉRIODIQUE ============
+setInterval(() => {
+  if (snacks.length > 0) {
+    localStorage.setItem('snacks', JSON.stringify(snacks));
+    console.log('💾 Backup localStorage effectué');
+  }
+}, 30000);
