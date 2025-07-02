@@ -1,5 +1,8 @@
-const publicKey = "BIZCSmkuHiMhyrm7mOz9LWNTxbDv2ZJLPsjJV9fyWnfz5A0ANWN1RzHWIp-r1AUGjOpCb-mZyw_9XYMgHhTieR0"; 
-// remplacer la clé par celle qui a été generer sur le site :
+//  Installer npm install -g web-push dans votre terminal
+
+
+const publicKey = "REMPLACER PAR LA CLE QUI A ETE GENERER PAR LE SERVEUR"; 
+// remplacer la clé par celle qui a été generer dans votre terminal avec les commandes suivantes : 
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
   navigator.serviceWorker.ready.then(registration => {
@@ -10,7 +13,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
           applicationServerKey: urlBase64ToUint8Array(publicKey)
         }).then(subscription => {
           console.log("📬 Abonné aux push :", JSON.stringify(subscription));
-          // Tu peux copier ce JSON et le coller dans un simulateur de push
+       
         });
       }
     });
