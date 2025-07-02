@@ -10,14 +10,11 @@ export function openDB() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       
-      // Supprimer l'ancien store s'il existe
-      if (db.objectStoreNames.contains('snacks')) {
-        db.deleteObjectStore('snacks');
+      // Ne pas supprimer - juste créer si n'existe pas
+      if (!db.objectStoreNames.contains('snacks')) {
+        const store = db.createObjectStore('snacks', { keyPath: 'id' });
+        store.createIndex('timestamp', 'timestamp', { unique: false });
       }
-      
-      // Créer le store avec la même structure que le SW
-      const store = db.createObjectStore('snacks', { keyPath: 'id' });
-      store.createIndex('timestamp', 'timestamp', { unique: false });
     };
 
     request.onsuccess = () => resolve(request.result);

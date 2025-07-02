@@ -100,7 +100,7 @@ async function loadSnacks() {
     let localSnacks = [];
     try {
       localSnacks = await getAllSnacks();
-      console.log('📦 Snacks depuis IndexedDB:', localSnacks.length);
+      console.log('📦 Snacks depuis IndexedDB:', localSnacks.length, localSnacks);
     } catch (error) {
       console.error('❌ Erreur IndexedDB:', error);
     }
