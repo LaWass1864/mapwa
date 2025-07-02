@@ -1,4 +1,4 @@
-//  Installer le package 
+//  Installer le package npm install web-push
 
 const publicKey = "REMPLACER PAR LA CLE QUI A ETE GENERER PAR LE SERVEUR"; 
 // remplacer la clé par celle qui a été generer ici : https://web-push-codelab.glitch.me/
