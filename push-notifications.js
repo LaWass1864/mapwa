@@ -1,32 +1,25 @@
-import webpush from 'web-push';
+const publicKey = "BIZCSmkuHiMhyrm7mOz9LWNTxbDv2ZJLPsjJV9fyWnfz5A0ANWN1RzHWIp-r1AUGjOpCb-mZyw_9XYMgHhTieR0"; 
+// remplacer la clé par celle qui a été generer sur le site :
 
-// Mets ici ta nouvelle paire
-const vapidKeys = {
-  publicKey: 'BJySxU8n_iPsuJdFPUEjlaNr6lk3SAWAtjTq84OiD2xu5P2L8jTz1i05EMRMUqGnVX-5t2cBk4eZ1GxmqDWcoXA',
-  privateKey: 'yzHj4YTADCdlqT7EGa9nLFOIeMcDqhjZJUK7CfbzMsM'
-};
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+  navigator.serviceWorker.ready.then(registration => {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey)
+        }).then(subscription => {
+          console.log("📬 Abonné aux push :", JSON.stringify(subscription));
+          // Tu peux copier ce JSON et le coller dans un simulateur de push
+        });
+      }
+    });
+  });
+}
 
-webpush.setVapidDetails(
-  'mailto:wassilaamoura8@gmail.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
-
-// Mets ici le dernier subscription JSON affiché dans ta console
-const subscription = {
-  endpoint: "...",
-  expirationTime: null,
-  keys: {
-    p256dh: "...",
-    auth: "..."
-  }
-};
-
-const payload = JSON.stringify({
-  title: "Snack'n'Track 🍪",
-  body: "🚀 Ta notif push fonctionne avec ta nouvelle clé VAPID"
-});
-
-webpush.sendNotification(subscription, payload)
-  .then(res => console.log('✅ Notification envoyée', res.statusCode))
-  .catch(err => console.error('❌ Erreur envoi push', err));
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = window.atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
