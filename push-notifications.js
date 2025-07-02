@@ -1,8 +1,7 @@
-//  Installer npm install -g web-push dans votre terminal
-
+//  Installer le package 
 
 const publicKey = "REMPLACER PAR LA CLE QUI A ETE GENERER PAR LE SERVEUR"; 
-// remplacer la clé par celle qui a été generer dans votre terminal avec les commandes suivantes : 
+// remplacer la clé par celle qui a été generer ici : https://web-push-codelab.glitch.me/
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
   navigator.serviceWorker.ready.then(registration => {
